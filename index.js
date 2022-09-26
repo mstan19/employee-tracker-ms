@@ -43,47 +43,13 @@ let addDepartmentQuestion = [
   }
 ]
 
-let addRoleQuestion = [
-  {
-      type: 'input',
-      name: 'AddRolename',
-      message: "What is the name of the role?"
-  },
-  {
-    type: 'input',
-    name: 'salary',
-    message: "What is the salary of the role?"
-  },
-  {
-    type: 'list',
-    name: 'belongDepartment',
-    message: "Which department does the role belong to?",
-    choices: getAllDepartments()
-  }
-]
+async function getAllDepartments() {
 
-
-async function getAllDepartments(){
-  const result = await db.query( 'SELECT * FROM department');
-  return result;
-
-}
-
-
-function allDepartments() {
-  // // return ["A", "B", "C"];
-  // db.query( 'SELECT * FROM department').then( err, results => {
-  //   console.log(results.map(department => department.department_name));
-
-  // }); 
-  // const result = await db.query( 'SELECT * FROM department')
-  // db.query('SELECT * FROM department', function () {
-  //   // console.log(results.map(companyDepartment => companyDepartment.department_name))
-  //   console.log(results.map(department => department.department_name));
-  // });
-  // return ["A", "B", "C"];
-
-}
+  let dbDepartment = 'SELECT * FROM department'
+  let [results, err] = await db.promise().query(dbDepartment);
+  // results.map(department => department.department_name);
+  return results;
+ }
 
 function mainMenu() {
   inquirer.prompt(mainQuestions)
@@ -149,33 +115,90 @@ function AddDepartment() {
     });
   }
 
-  function AddRole() {
-    inquirer.prompt(addRoleQuestion)
+  // async function getAllRole() {
+
+  //   let dbRoles = 'UPDATE * FROM roles'
+  //   let [results, err] = await db.promise().query(dbRoles);
+    
+  //   return results.map(role => role.roles_id);
+  //  }
+  
+
+  async function AddRole() {
+    let listDepartment = await getAllDepartments()
+    let arrayDepartment = listDepartment.map(department => department.department_name) 
+  
+    inquirer.prompt([
+      {
+          type: 'input',
+          name: 'AddRolename',
+          message: "What is the name of the role?"
+      },
+      {
+        type: 'input',
+        name: 'salary',
+        message: "What is the salary of the role?"
+      },
+      {
+        type: 'list',
+        name: 'belongDepartment',
+        message: "Which department does the role belong to?",
+        choices: arrayDepartment
+      }
+    ])
       .then((answersAR) => {
         // console.log(answersAR);
         let addRoleName = answersAR.AddRolename;
         let addRoleSalary = answersAR.salary;
         // let AddRoleDepartmentID = answersAR.belongDepartment;
-        let ARbelongDepartment = answersAR.belongDepartment;
-        // db.query('SELECT * FROM department', function (err, results) {
-        // });
-        db.query(`insert into roles (title,salary,department_id) values ("${addRoleName}", ${addRoleSalary}, "${ARbelongDepartment}");`, function (err, results) {
-          // console.log(err)
-          console.log("\n")
-          console.table(results);
+        let userChoice = answersAR.belongDepartment;
+        let departID = listDepartment.find(department => department.department_name === userChoice).id
+        
+        db.query(`insert into roles (title,salary,department_id) values ("${addRoleName}", ${addRoleSalary}, "${departID}");`, function (err, results) {
+          if (err) throw (err)
+          // console.log("\n")
+          // console.table(results);
       });
       mainMenu();
       });
     }
 
-// function AddEmployee() {
-//   lfirstName
-//   db.query('insert into employees (first_name, last_name, roles_id) values ("bob", "smith", 4);', function (err, results) {
-//     console.log("\n")
-//     console.table(results);
-//   });
-//   mainMenu();
-// }
+async function AddEmployee() {
+  inquirer.prompt([
+    {
+        type: 'input',
+        name: 'AddRolename',
+        message: "What is the name of the role?"
+    },
+    {
+      type: 'input',
+      name: 'salary',
+      message: "What is the salary of the role?"
+    },
+    {
+      type: 'list',
+      name: 'belongDepartment',
+      message: "Which department does the role belong to?",
+      choices: await getAllDepartments()
+    }
+  ])
+    .then((answersAE) => {
+      // console.log(answersAR);
+      let addFirstName = answersAE.addFirstName;
+      let addLastName = answersAE.addLastName;
+     
+      // let AddRoleDepartmentID = answersAR.belongDepartment;
+      let AEbelongDepartment = answersAE.belongDepartment;
+      // db.query('SELECT * FROM department', function (err, results) {
+      // });
+      db.query(`insert into employees (title,salary,department_id) values ("${addFirstName}", ${addLastName}, "${AEbelongDepartment}");`, function (err, results) {
+        // console.log(err)
+        console.log("\n")
+        console.table(results);
+    });
+    mainMenu();
+    });
+  }
 
 
 

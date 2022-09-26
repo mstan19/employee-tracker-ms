@@ -1,0 +1,3 @@
+-- UPDATE roles
+-- SET title = "accountant", department_id = 3;
+-- where id = ;

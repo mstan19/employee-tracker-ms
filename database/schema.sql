@@ -4,18 +4,27 @@ CREATE DATABASE company_db;
 USE company_db;
 
 CREATE TABLE department (
-  id INT NOT NULL,
-  first_name VARCHAR(30),
-  last_name VARCHAR(30),
-  PRIMARY KEY (id)
+  id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  department_name VARCHAR(30) NOT NULL
 );
 
-CREATE TABLE empolyees (
-  id INT,
-  course_title VARCHAR(30) NOT NULL,
-  instructor_id INT,
-  order_details TEXT,
-  FOREIGN KEY (instructor_id)
-  REFERENCES instructors(id)
+CREATE TABLE roles (
+  id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  title VARCHAR(30) NOT NULL,
+  salary DECIMAL(7,2) NOT NULL,
+  department_id INT,
+  FOREIGN KEY (department_id)
+  REFERENCES department(id)
   ON DELETE SET NULL
 );
+
+CREATE TABLE employees (
+  id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  first_name VARCHAR(30) NOT NULL,
+  last_name VARCHAR(30) NOT NULL,
+  roles_id INT,
+  FOREIGN KEY (roles_id)
+  REFERENCES roles(id)
+  ON DELETE SET NULL
+);
+

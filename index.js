@@ -16,15 +16,6 @@ const db = mysql.createConnection(
     console.log(`Connected to the company_db database.`)
   );
 
-// //update employees role
-// let updateRole = "";
-// db.query(`SELECT * FROM roles WHERE title = ?`, updateRole, (err, result) => {
-//   if (err) {
-//     console.log(err);
-//   }
-//   console.log(result);
-// });
-
 let mainQuestions = [
   {
       type: "list",
@@ -42,14 +33,6 @@ let addDepartmentQuestion = [
       message: "What is the name of the department?"
   }
 ]
-
-async function getAllDepartments() {
-
-  let dbDepartment = 'SELECT * FROM department'
-  let [results, err] = await db.promise().query(dbDepartment);
-  // results.map(department => department.department_name);
-  return results;
- }
 
 function mainMenu() {
   inquirer.prompt(mainQuestions)
@@ -114,20 +97,16 @@ function AddDepartment() {
     mainMenu();
     });
   }
-
-  // async function getAllRole() {
-
-  //   let dbRoles = 'UPDATE * FROM roles'
-  //   let [results, err] = await db.promise().query(dbRoles);
-    
-  //   return results.map(role => role.roles_id);
-  //  }
+  async function getAllDepartments() {
+    let dbDepartment = 'SELECT * FROM department'
+    let [results, err] = await db.promise().query(dbDepartment);
+    // results.map(department => department.department_name);
+    return results;
+   }
   
-
   async function AddRole() {
     let listDepartment = await getAllDepartments()
     let arrayDepartment = listDepartment.map(department => department.department_name) 
-  
     inquirer.prompt([
       {
           type: 'input',
@@ -163,44 +142,65 @@ function AddDepartment() {
       });
     }
 
+async function getAllRoles() {
+  let dbRoles = 'SELECT * FROM roles'
+  let [results, err] = await db.promise().query(dbRoles);
+  // results.map(department => department.department_name);
+  // console.log(results);
+
+  return results;
+  // console.log(test);
+  }
+
 async function AddEmployee() {
+  let listRoles = await getAllRoles()
+  
+  let arrayRoles = listRoles.map(role => role.title)
+  console.log(arrayRoles)
   inquirer.prompt([
     {
         type: 'input',
-        name: 'AddRolename',
-        message: "What is the name of the role?"
+        name: 'firstName',
+        message: "What is the employee's first name?"
     },
     {
       type: 'input',
-      name: 'salary',
-      message: "What is the salary of the role?"
+      name: 'lastName',
+      message: "WWhat is the employee's last name?"
     },
     {
       type: 'list',
-      name: 'belongDepartment',
-      message: "Which department does the role belong to?",
-      choices: await getAllDepartments()
+      name: 'employeeTitle',
+      message: "What is the employee's role?",
+      choices: arrayRoles
     }
   ])
     .then((answersAE) => {
       // console.log(answersAR);
-      let addFirstName = answersAE.addFirstName;
-      let addLastName = answersAE.addLastName;
-     
+      let firstName = answersAE.firstName;
+      let lastName = answersAE.lastName;
       // let AddRoleDepartmentID = answersAR.belongDepartment;
-      let AEbelongDepartment = answersAE.belongDepartment;
-      // db.query('SELECT * FROM department', function (err, results) {
-      // });
-      db.query(`insert into employees (title,salary,department_id) values ("${addFirstName}", ${addLastName}, "${AEbelongDepartment}");`, function (err, results) {
-        // console.log(err)
-        console.log("\n")
-        console.table(results);
+      let userChoice = answersAE.employeeTitle;
+      let roleID = listRoles.find(role => role.title === userChoice).id
+      // let departID = listDepartment.find(department => department.department_name === userChoice).id
+
+      
+      db.query(`insert into employees (first_name, last_name, roles_id) values ("${firstName}", "${lastName}", "${roleID}");`, function (err, results) {
+        if (err) throw (err)
+        // console.log("\n")
+        // console.table(results);
     });
     mainMenu();
     });
   }
 
-
-
+//update employees role
+// let updateRole = "";
+// db.query(`SELECT * FROM roles WHERE title = ?`, updateRole, (err, result) => {
+//   if (err) {
+//     console.log(err);
+//   }
+//   console.log(result);
+// });
 
 mainMenu();

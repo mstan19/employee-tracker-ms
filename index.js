@@ -21,8 +21,7 @@ let mainQuestions = [
       type: "list",
       name: "action",
       message: "What would you like to do?",
-      choices: ["View All Employees", "Add an Employee", "Delete an Employee", "Update an Employee Role", "View All Roles", "Add Role", "Delete Role", "View All Departments", "Add a Department", "Delete a Department", "Quit"
-      ]
+      choices: ["View All Employees", "Add an Employee", "Delete an Employee", "Update an Employee Role", "View All Roles", "Add Role", "Delete Role", "View All Departments", "Add a Department", "Delete a Department", "Quit"]
   }
 ];
 
@@ -93,12 +92,8 @@ function viewAllRoles() {
 function AddDepartment() {
   inquirer.prompt(addDepartmentQuestion)
     .then((answersAD) => {
-      // console.log(answersAD);
       let departmentName = answersAD.Dname;
       db.query(`insert into department (department_name) values ("${departmentName}");`, function (err, results) {
-        // console.log(err)
-        // console.log("\n")
-        // console.table(results);
     });
     mainMenu();
     });
@@ -106,7 +101,6 @@ function AddDepartment() {
   async function getAllDepartments() {
     let dbDepartment = 'SELECT * FROM department'
     let [results, err] = await db.promise().query(dbDepartment);
-    // results.map(department => department.department_name);
     return results;
    }
   
@@ -132,17 +126,13 @@ async function AddRole() {
     }
   ])
     .then((answersAR) => {
-      // console.log(answersAR);
       let addRoleName = answersAR.AddRolename;
       let addRoleSalary = answersAR.salary;
-      // let AddRoleDepartmentID = answersAR.belongDepartment;
       let userChoice = answersAR.belongDepartment;
       let departID = listDepartment.find(department => department.department_name === userChoice).id
       
       db.query(`insert into roles (title,salary,department_id) values ("${addRoleName}", ${addRoleSalary}, "${departID}");`, function (err, results) {
         if (err) throw (err)
-        // console.log("\n")
-        // console.table(results);
     });
     mainMenu();
     });
@@ -151,6 +141,7 @@ async function AddRole() {
 async function DeleteRole() {
   let listRoles = await getAllRoles()
   let arrayRoles = listRoles.map(role => role.title) 
+  
   inquirer.prompt([
     {
       type: 'list',
@@ -165,9 +156,9 @@ async function DeleteRole() {
       let roleID = listRoles.find(role => role.title === userChoice).id
       
       db.query(`delete from roles where id = ${roleID};`, function (err, results) {
-        if (err) throw (err)
-        // console.log("\n")
-        // console.table(results);
+        if (err) {
+          throw (err)
+        }
     });
     mainMenu();
     });
@@ -177,17 +168,13 @@ async function DeleteRole() {
 async function getAllRoles() {
   let dbRoles = 'SELECT * FROM roles'
   let [results, err] = await db.promise().query(dbRoles);
-  // results.map(department => department.department_name);
-  // console.log(results);
-
   return results;
-  // console.log(test);
   }
 
 async function AddEmployee() {
   let listRoles = await getAllRoles()
   let arrayRoles = listRoles.map(role => role.title)
-  // console.log(arrayRoles)
+
   inquirer.prompt([
     {
         type: 'input',
@@ -207,19 +194,14 @@ async function AddEmployee() {
     }
   ])
     .then((answersAE) => {
-      // console.log(answersAR);
       let firstName = answersAE.firstName;
       let lastName = answersAE.lastName;
-      // let AddRoleDepartmentID = answersAR.belongDepartment;
       let userChoice = answersAE.employeeTitle;
       let roleID = listRoles.find(role => role.title === userChoice).id
-      // let departID = listDepartment.find(department => department.department_name === userChoice).id
 
       
       db.query(`insert into employees (first_name, last_name, roles_id) values ("${firstName}", "${lastName}", "${roleID}");`, function (err, results) {
         if (err) throw (err)
-        // console.log("\n")
-        // console.table(results);
     });
     mainMenu();
     });
@@ -238,7 +220,6 @@ async function DeleteEmployee() {
     }
   ])
   .then((answersDE) => {
-    // console.log(answersAR);
     let removeEmployee = answersDE.employeeName;
     let employeeID = listEmployees.find(user => `${user.first_name} ${user.last_name}` ===  removeEmployee).id
     
@@ -246,7 +227,6 @@ async function DeleteEmployee() {
       if (err) {
         throw (err)
       }
-      // console.table(results);
   });
   mainMenu();
   });
@@ -259,9 +239,8 @@ async function getAllEmployees() {
     console.log(results);
   
     return results;
-    // console.log(test);
     }
-//update employees role
+
 async function UpdateRole(){
   let listRoles = await getAllRoles()
   let arrayRoles = listRoles.map(role => role.title)
@@ -272,7 +251,7 @@ async function UpdateRole(){
   console.log(arrayEmployees)
   console.log(arrayRoles)
 
-  inquirer.prompt([
+  inquirer.prompt([+
     {
         type: 'list',
         name: 'employeeName',
@@ -287,25 +266,15 @@ async function UpdateRole(){
   }
   ])
   .then((answersUE) => {
-    // console.log(answersAR);
     let employseeSelected = answersUE.employeeName;
     let employeeID = listEmployees.find(user => `${user.first_name} ${user.last_name}` ===  employseeSelected).id
-    // let AddRoleDepartmentID = answersAR.belongDepartment;
-    // let employeeSelected = answersUE.employeeTitle;
-
     let userChoice = answersUE.updateRole;
     let roleID = listRoles.find(role => role.title === userChoice).id
-
-    // let departID = listDepartment.find(department => department.department_name === userChoice).id
-
 
     db.query(`UPDATE employees SET roles_id = "${roleID}" WHERE id = "${employeeID}";`, (err, result) => {
       if (err) {
         throw (err)
       }
-      // console.log("Employee has been updated!");
-      // console.log("\n")
-      // console.table(results);
   });
   mainMenu();
   }); 
@@ -333,7 +302,5 @@ async function deleteDepartment() {
   mainMenu();
   }); 
 }
-
-
 
 mainMenu();

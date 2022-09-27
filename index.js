@@ -77,7 +77,7 @@ function viewAllEmployees() {
 }
 
 function viewAllRoles() {
-  db.query('SELECT * FROM roles', function (err, results) {
+  db.query('SELECT roles.id, roles.title, department.department_name AS department, roles.salary FROM roles LEFT JOIN department on roles.department_id = department.id;', function (err, results) {
     console.log("\n")
     console.table(results);
   });

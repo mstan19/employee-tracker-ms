@@ -47,6 +47,9 @@ THEN I am prompted to select an employee to update and their new role and this i
 
 
 
+view all roles  
+    -department needs to be spelled out
+
 
 
 

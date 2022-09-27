@@ -54,7 +54,7 @@ function mainMenu() {
       } else if (answersMain.action === "Add a Department"){
         AddDepartment();
       } else {
-          writeFile();
+        db.end();
       }
   });
 }
@@ -69,7 +69,7 @@ function viewAllDepartments() {
 }
 
 function viewAllEmployees() {
-  db.query('SELECT * FROM employees', function (err, results) {
+  db.query('SELECT employees.id, employees.first_name, employees.last_name, roles.title, department.department_name AS department, roles.salary FROM employees LEFT JOIN roles ON employees.roles_id = roles.id LEFT JOIN department on roles.department_id = department.id;', function (err, results) {
     console.log("\n")
     console.table(results);
   });

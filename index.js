@@ -154,9 +154,8 @@ async function getAllRoles() {
 
 async function AddEmployee() {
   let listRoles = await getAllRoles()
-  
   let arrayRoles = listRoles.map(role => role.title)
-  console.log(arrayRoles)
+  // console.log(arrayRoles)
   inquirer.prompt([
     {
         type: 'input',
@@ -166,7 +165,7 @@ async function AddEmployee() {
     {
       type: 'input',
       name: 'lastName',
-      message: "WWhat is the employee's last name?"
+      message: "What is the employee's last name?"
     },
     {
       type: 'list',
@@ -194,13 +193,62 @@ async function AddEmployee() {
     });
   }
 
+  async function getAllEmployees() {
+    let dbEmployees = 'SELECT * FROM employees'
+    let [results, err] = await db.promise().query(dbEmployees);
+    // results.map(department => department.department_name);
+    console.log(results);
+  
+    return results;
+    // console.log(test);
+    }
 //update employees role
-// let updateRole = "";
-// db.query(`SELECT * FROM roles WHERE title = ?`, updateRole, (err, result) => {
-//   if (err) {
-//     console.log(err);
-//   }
-//   console.log(result);
-// });
+async function UpdateRole(){
+  let listRoles = await getAllRoles()
+  let arrayRoles = listRoles.map(role => role.title)
+  let listEmployees = await getAllEmployees();
+  let arrayEmployees = listEmployees.map(employee => `${employee.first_name} ${employee.last_name}`);
+  console.log(listRoles)
+  
+  console.log(arrayEmployees)
+  console.log(arrayRoles)
+
+  inquirer.prompt([
+    {
+        type: 'list',
+        name: 'employeeName',
+        message: "Which employee's role do you want to update?",
+        choices: arrayEmployees
+    },
+    {
+      type: 'list',
+      name: 'updateRole',
+      message: "Which role do you want to assign the selected employee?",
+      choices: arrayRoles
+  }
+  ])
+  .then((answersUE) => {
+    // console.log(answersAR);
+    let employseeSelected = answersUE.employeeName;
+    let employeeID = listEmployees.find(user => `${user.first_name} ${user.last_name}` ===  employseeSelected).id
+    // let AddRoleDepartmentID = answersAR.belongDepartment;
+    // let employeeSelected = answersUE.employeeTitle;
+
+    let userChoice = answersUE.updateRole;
+    let roleID = listRoles.find(role => role.title === userChoice).id
+
+    // let departID = listDepartment.find(department => department.department_name === userChoice).id
+
+
+    db.query(`UPDATE employees SET roles_id = "${roleID}" WHERE id = "${employeeID}";`, (err, result) => {
+      if (err) throw (err)
+      // console.log("Employee has been updated!");
+      // console.log("\n")
+      // console.table(results);
+  });
+  mainMenu();
+  });
+  
+}
 
 mainMenu();

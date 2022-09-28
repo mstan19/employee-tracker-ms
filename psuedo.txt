@@ -53,4 +53,32 @@ view all roles
 
 
 
+employeelist
++----+------------+-----------+----------+------------+
+| id | first_name | last_name | roles_id | manager_id |
++----+------------+-----------+----------+------------+
+|  1 | Maze       | Stan      |        1 |       NULL |
+|  2 | Kate       | Armstrong |        3 |       NULL |
+|  3 | Jack       | Lee       |        2 |          2 ||  2 | Kate       | Armstrong |        3 |       NULL |
+|  4 | Thomas     | Won       |        5 |       NULL |
+|  5 | Rose       | Wood      |        4 |          4 ||  4 | Thomas     | Won       |        5 |       NULL |
+|  6 | Gabriel    | Garcia    |        4 |       NULL |
+|  7 | Robert     | Song      |        5 |          6 |
+|  8 | Chris      | Bailey    |        7 |       NULL |
+|  9 | Deez       | Nut       |        6 |          6 |
++----+------------+-----------+----------+------------+
 
+managerlist
++----+------------+-----------+----------+------------+
+| id | first_name | last_name | roles_id | manager_id |
++----+------------+-----------+----------+------------+
+|  1 | Maze       | Stan      |        1 |       NULL |
+|  2 | Kate       | Armstrong |        3 |       NULL |
+|  3 | Jack       | Lee       |        2 |          2 |
+|  4 | Thomas     | Won       |        5 |       NULL |
+|  5 | Rose       | Wood      |        4 |          4 |
+|  6 | Gabriel    | Garcia    |        4 |       NULL |
+|  7 | Robert     | Song      |        5 |          6 |
+|  8 | Chris      | Bailey    |        7 |       NULL |
+|  9 | Deez       | Nut       |        6 |          6 |
++----+------------+-----------+----------+------------+

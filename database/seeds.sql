@@ -15,9 +15,11 @@ VALUES ("front office coordinator", 60000.03, 1),
 
 INSERT INTO employees (first_name, last_name, roles_id, manager_id)
 VALUES ("Maze", "Stan", 1, NULL),
-       ("Jack", "Lee", 2, 3),
        ("Kate", "Armstrong", 3, NULL),
-       ("Rose", "Wood", 4, 5),
+       ("Jack", "Lee", 2, 2),
        ("Thomas", "Won", 5, NULL),
-       ("Robert", "Song", 5, 7),
-       ("Gabriel", "Garcia", 4, NULL);
+       ("Rose", "Wood", 4, 4),
+       ("Gabriel", "Garcia", 4, NULL),
+       ("Robert", "Song", 5, 6),
+       ("Chris", "Bailey", 7, NULL),
+       ("Deez", "Nut", 6, 6);

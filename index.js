@@ -21,7 +21,7 @@ let mainQuestions = [
       type: "list",
       name: "action",
       message: "What would you like to do?",
-      choices: ["View All Employees", "Add an Employee", "Delete an Employee", "Update an Employee Role", "View All Roles", "Add Role", "Delete Role", "View All Departments", "Add a Department", "Delete a Department", "Quit"]
+      choices: ["View All Employees", "Add an Employee", "Delete an Employee", "Update an Employee Role", "View All Roles", "Add Role", "Delete Role", "View All Departments", "Add a Department", "Delete a Department", "View Departments Budget", "Quit"]
   }
 ];
 
@@ -58,12 +58,13 @@ function mainMenu() {
         AddDepartment();
       } else if (answersMain.action === "Delete a Department"){
         deleteDepartment();
+      } else if (answersMain.action === "View Departments Budget"){
+        viewBudget();
       } else {
         db.end();
       }
   });
 }
-
 function viewAllDepartments() {
   // console.log("hiiii");
   db.query('SELECT * FROM department', function (err, results) {
@@ -74,7 +75,7 @@ function viewAllDepartments() {
 }
 
 function viewAllEmployees() {
-  db.query('SELECT employees.id, employees.first_name, employees.last_name, roles.title, department.department_name AS department, roles.salary FROM employees LEFT JOIN roles ON employees.roles_id = roles.id LEFT JOIN department on roles.department_id = department.id;', function (err, results) {
+  db.query('select employeeList.id,employeeList.first_name, employeeList.last_name, roles.title, department.department_name as department, roles.salary, concat(managerList.first_name, " ", managerList.last_name) as manager from employees as employeeList join roles on employeeList.roles_id = roles.id join department on roles.department_id = department.id left join employees as managerList on managerList.id = employeeList.manager_id order by employeeList.id;', function (err, results) {
     console.log("\n")
     console.table(results);
   });
@@ -141,7 +142,7 @@ async function AddRole() {
 async function DeleteRole() {
   let listRoles = await getAllRoles()
   let arrayRoles = listRoles.map(role => role.title) 
-  
+
   inquirer.prompt([
     {
       type: 'list',
@@ -173,7 +174,20 @@ async function getAllRoles() {
 
 async function AddEmployee() {
   let listRoles = await getAllRoles()
-  let arrayRoles = listRoles.map(role => role.title)
+  let arrayRoles = listRoles.map(role => role.title);
+  let listEmployees = await getAllEmployees();
+  let objectManagers = listEmployees.filter(manager => {
+    if (manager.manager_id === null) {
+      return manager
+    }    
+  });
+
+  let managersList = objectManagers.map(manager => `${manager.first_name} ${manager.last_name}`);
+  managersList.push("None");
+  
+  console.log("managersList");
+  console.log(managersList);
+
 
   inquirer.prompt([
     {
@@ -191,16 +205,26 @@ async function AddEmployee() {
       name: 'employeeTitle',
       message: "What is the employee's role?",
       choices: arrayRoles
+    },
+    {
+      type: 'list',
+      name: 'manager',
+      message: "Who is the employee's manager?",
+      choices: managersList
     }
   ])
     .then((answersAE) => {
       let firstName = answersAE.firstName;
       let lastName = answersAE.lastName;
       let userChoice = answersAE.employeeTitle;
+      let selectedManager = answersAE.manager;
       let roleID = listRoles.find(role => role.title === userChoice).id
-
-      
-      db.query(`insert into employees (first_name, last_name, roles_id) values ("${firstName}", "${lastName}", "${roleID}");`, function (err, results) {
+     
+      let managerID = objectManagers.find(manager => `${manager.first_name} ${manager.last_name}` === selectedManager).id;
+       if (selectedManager === "None") {
+         managerID = null;
+        }
+      db.query(`insert into employees (first_name, last_name, roles_id, manager_id) values ("${firstName}", "${lastName}", "${roleID}","${managerID}");`, function (err, results) {
         if (err) throw (err)
     });
     mainMenu();
@@ -235,9 +259,9 @@ async function DeleteEmployee() {
 async function getAllEmployees() {
     let dbEmployees = 'SELECT * FROM employees'
     let [results, err] = await db.promise().query(dbEmployees);
-    // results.map(department => department.department_name);
-    console.log(results);
-  
+    if (err) {
+      throw (err)
+    }
     return results;
     }
 
@@ -246,12 +270,8 @@ async function UpdateRole(){
   let arrayRoles = listRoles.map(role => role.title)
   let listEmployees = await getAllEmployees();
   let arrayEmployees = listEmployees.map(employee => `${employee.first_name} ${employee.last_name}`);
-  console.log(listRoles)
-  
-  console.log(arrayEmployees)
-  console.log(arrayRoles)
 
-  inquirer.prompt([+
+  inquirer.prompt([
     {
         type: 'list',
         name: 'employeeName',
@@ -303,4 +323,16 @@ async function deleteDepartment() {
   }); 
 }
 
+async function viewBudget() {
+  await getAllDepartments();
+  db.query(`select department_id as id, department.department_name as department, sum(salary) AS budget FROM roles join department on roles.department_id = department.id GROUP BY department_id;;`, (err, result) => {
+    if (err) {
+      throw (err)
+    }
+    console.table(result);
+  });
+  mainMenu();
+  }
+
 mainMenu();
+

@@ -174,8 +174,11 @@ async function getAllRoles() {
 
 async function AddEmployee() {
   let listRoles = await getAllRoles()
+  console.log("test1");
   let arrayRoles = listRoles.map(role => role.title);
+  console.log("test2");
   let listEmployees = await getAllEmployees();
+  console.log("test3");
   let objectManagers = listEmployees.filter(manager => {
     if (manager.manager_id === null) {
       return manager
@@ -219,13 +222,17 @@ async function AddEmployee() {
       let userChoice = answersAE.employeeTitle;
       let selectedManager = answersAE.manager;
       let roleID = listRoles.find(role => role.title === userChoice).id
-     
-      let managerID = objectManagers.find(manager => `${manager.first_name} ${manager.last_name}` === selectedManager).id;
-       if (selectedManager === "None") {
-         managerID = null;
+      let managerID = ""
+      if (selectedManager === "None") {
+         managerID = "NULL";
+      } else {
+        managerID = objectManagers.find(manager => `${manager.first_name} ${manager.last_name}` === selectedManager).id;
+      }
+
+      db.query(`insert into employees (first_name, last_name, roles_id, manager_id) values ("${firstName}", "${lastName}", ${roleID},${managerID});`, function (err, results) {
+        if (err) {
+          throw (err)
         }
-      db.query(`insert into employees (first_name, last_name, roles_id, manager_id) values ("${firstName}", "${lastName}", "${roleID}","${managerID}");`, function (err, results) {
-        if (err) throw (err)
     });
     mainMenu();
     });
@@ -257,11 +264,11 @@ async function DeleteEmployee() {
 }
 
 async function getAllEmployees() {
-    let dbEmployees = 'SELECT * FROM employees'
+    let dbEmployees = 'SELECT * FROM employees;';
+    console.log("more test1")
     let [results, err] = await db.promise().query(dbEmployees);
-    if (err) {
-      throw (err)
-    }
+
+    console.log("more test3")
     return results;
     }
 

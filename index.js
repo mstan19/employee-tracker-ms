@@ -36,9 +36,7 @@ let addDepartmentQuestion = [
 function mainMenu() {
   inquirer.prompt(mainQuestions)
   .then((answersMain) => {
-    // console.log(answersMain)
       if (answersMain.action === "View All Employees"){
-          // console.log(answersMain)
         viewAllEmployees();
       } else if (answersMain.action === "Add an Employee"){
         AddEmployee();
@@ -66,7 +64,6 @@ function mainMenu() {
   });
 }
 function viewAllDepartments() {
-  // console.log("hiiii");
   db.query('SELECT * FROM department', function (err, results) {
     console.log("\n")
     console.table(results);
@@ -174,11 +171,8 @@ async function getAllRoles() {
 
 async function AddEmployee() {
   let listRoles = await getAllRoles()
-  console.log("test1");
   let arrayRoles = listRoles.map(role => role.title);
-  console.log("test2");
   let listEmployees = await getAllEmployees();
-  console.log("test3");
   let objectManagers = listEmployees.filter(manager => {
     if (manager.manager_id === null) {
       return manager
@@ -188,9 +182,6 @@ async function AddEmployee() {
   let managersList = objectManagers.map(manager => `${manager.first_name} ${manager.last_name}`);
   managersList.push("None");
   
-  console.log("managersList");
-  console.log(managersList);
-
 
   inquirer.prompt([
     {
@@ -265,10 +256,8 @@ async function DeleteEmployee() {
 
 async function getAllEmployees() {
     let dbEmployees = 'SELECT * FROM employees;';
-    console.log("more test1")
     let [results, err] = await db.promise().query(dbEmployees);
 
-    console.log("more test3")
     return results;
     }
 
@@ -336,6 +325,7 @@ async function viewBudget() {
     if (err) {
       throw (err)
     }
+    console.log("\n")
     console.table(result);
   });
   mainMenu();

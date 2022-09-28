@@ -23,7 +23,7 @@ To use this application, open the terminal, respective to the file. Run the ```n
 
 This is what the index.html will look like when deployed.
 
-![Employee Tracker mock-up](./assets/images/)
+![Employee Tracker mock-up](./assets/images/employee-tracker-mock-up.png)
 ![Employee Tracker design database](./assets/images/design_db_schemas.pngimages/)
 
 ## License
@@ -41,7 +41,7 @@ For more information about this application, please email me at melissastan91@gm
 
 ## Video
 Click on this link for the demo of this application.
-
+https://drive.google.com/file/d/1gdrNIA8U-mXSh3SVHmhqd6YUXo2FDYAL/view
 
 ## Depolyment
 Click on this link for deployed application

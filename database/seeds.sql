@@ -19,7 +19,7 @@ VALUES ("Maze", "Stan", 1, NULL),
        ("Jack", "Lee", 2, 2),
        ("Thomas", "Won", 5, NULL),
        ("Rose", "Wood", 4, 4),
-       ("Gabriel", "Garcia", 4, NULL),
-       ("Robert", "Song", 5, 6),
+       ("Gabriel", "Garcia", 4, 4),
+       ("Robert", "Song", 5, NULL),
        ("Chris", "Bailey", 7, NULL),
-       ("Deez", "Nut", 6, 6);
+       ("Daniel", "Nurt", 6, 8);
